@@ -1,0 +1,99 @@
+@import '_themes.scss';
+
+$buttonPadding: 10px;
+
+.sidebar{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: white;
+  min-width: 320px;
+  height: 100%;
+  transition: 200ms all;
+  overflow-x: hidden;
+  z-index: 1;
+  &__header{
+    text-align: left;
+    font-size: 28px;
+    color: var(--colorPrimary);
+    padding: 35px;
+    margin: 0;
+    border-bottom: 1px solid #bbbbbb;
+  }
+  &__list{
+    display: block;
+    margin: 50px 0 0 35px;
+    font-size: 16px;
+    font-weight: 600;
+    span{
+      margin-bottom: 15px;
+    }
+  }
+  &__list-element{
+    color: var(--grayPrimary);
+    border: none;
+    outline: none;
+    position: relative;
+    text-align: left;
+    padding: 5px 5px;
+    padding-right: 80%;
+    width: 80%;
+    transition: 150ms ease-in-out color;
+    .sidebar__button{
+      display: inline-block;
+      padding: 0 0 0 10px;
+      width: 100%;
+    }
+    &:hover{
+      color: var(--colorPrimary);
+      background-color: #fafafa;
+    }
+    &--active{
+      color: #404040;
+      background-color: #fafafa;
+      padding: 2px 0 2px 0;
+      &:before{
+        content: "";
+        height: 100%;
+        width: 5px;
+        border: 2px solid #3666ff;
+        border-radius: 5px;
+      }
+    }
+  }
+  &__title{
+    font-weight: 200;
+  }
+  &__create-list{
+    display: flex;
+    align-items: center;
+    color: var(--grayPrimary);
+    margin: 10px 0 0 0;
+    padding: $buttonPadding $buttonPadding $buttonPadding 0;
+    transition: 150ms ease-in-out color;
+    &:hover{
+      color: var(--colorPrimary);
+    }
+    .create-list__icon{
+      margin-right: 5px;
+      font-size: 28px;
+    }
+    .create-list__text{
+      margin: 0;
+    }
+  }
+}
+
+.sidebar__icon-wrapper{
+  padding: 30px;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  float: right;
+  transition: 200ms ease-in-out all;
+  .sidebar__icon{
+    font-size: 32px;
+    color: var(--grayPrimary);
+  }
+}
+
