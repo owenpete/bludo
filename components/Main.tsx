@@ -8,6 +8,8 @@ import format from "date-fns/format";
 import { v4 as uuidv4 } from 'uuid';
 import Task from '../types/Task';
 
+import axios from 'axios';
+
 const checkDatePlacement = (currDate: Date, dueDate: Date) =>{
   const className = 'main__due-date';
 
@@ -31,18 +33,23 @@ const checkDatePlacement = (currDate: Date, dueDate: Date) =>{
 
 interface Props{
   toggleSidebar: any;
+  todo: any;
+  complete: any;
+  refreshData: any;
+  editMode: any;
+  toggleEditMode: any;
 }
 
 export default function Main(props: Props) {
+  useEffect(()=>{
+  });
+
   const currentDate = new Date();
   const [pickerDate, setPickerDate] = useState(new Date());
-  const [list, setList] = useState<Task[]>([]);
-  const [completeList, setCompleteList] = useState<Task[]>([]);
-  const [editMode, setEditMode] = useState<boolean>(false);
   const [task, setTask] = useState<Task>({
     title: "",
     note: "",
-    dueDate: pickerDate
+    dueDate: pickerDate,
   });
 
   const handleTitleChange = (title: string) =>{
@@ -55,64 +62,82 @@ export default function Main(props: Props) {
     setTask({...task, dueDate: date});
   }
 
-  const handleTaskSubmit=()=>{
-    if(task.title!=""){
-      list == undefined ? setList([{...task, id: uuidv4()}]) : setList([...list, {...task, id: uuidv4()}]);
-      setTask({title: "", note: "", dueDate: task.dueDate, id: undefined});
+  const handleTaskSubmit= async()=>{
+    if(task.title != ""){
+      try {
+        const response = await axios.post('http://localhost:3000/api/addItem',{
+          title: task.title,
+          note: task.note,
+          dueDate: task.dueDate.getTime(),
+          id: uuidv4()
+        });
+        props.refreshData();
+        setTask({title: "", note: "", dueDate: currentDate, id: ""});
+      } catch (err: any) {
+        console.log(err.response);
+      }
     }
   }
 
-  const handleCheck=(e: any)=>{
-    if(completeList != []){
-      setCompleteList([...completeList, list.slice(0)[0]]);
-    }else {
-      setCompleteList(list.slice(0,1));
+  const handleCheck=async(e: any)=>{
+    try{
+      const res: any = await axios.get('http://localhost:3000/api/list');
+      const todo = await res.data.todo;
+      const complete = await res.data.complete;
+      for(let i = 0; i < todo.length; i++){
+        if(todo[i].id == e.target.parentElement.id){
+          await axios.post('http://localhost:3000/api/checkItem', {index: i, list: 'todo'});
+        }
+      }
+      for(let i = 0; i < complete.length; i++){
+        if(complete[i].id == e.target.parentElement.id){
+          await axios.post('http://localhost:3000/api/checkItem', {index: i, list: 'complete'});
+        }
+      }
+    }catch(err: any){
+      console.log(err.response);
     }
-    setList(list.filter((value: any)=>e.target.parentNode.id !== value.id));
+    props.refreshData();
   }
-  const handleUncheck=(e: any)=>{
-    if(list != []){
-      setList([...list, completeList.slice(0)[0]]);
-    }else {
-      setList(completeList.slice(0,1));
+
+  const handleRemove=async(e: any)=>{
+    try{
+      const res: any = await axios.get('http://localhost:3000/api/list');
+      const todo = await res.data.todo;
+      const complete = await res.data.complete;
+      for(let i = 0; i < todo.length; i++){
+        if(todo[i].id == e.target.parentElement.id){
+          await axios.post('http://localhost:3000/api/removeItem', {index: i, list: 'todo'});
+        }
+      }
+      for(let i = 0; i < complete.length; i++){
+        if(complete[i].id == e.target.parentElement.id){
+          await axios.post('http://localhost:3000/api/removeItem', {index: i, list: 'complete'});
+        }
+      }
+    }catch(err: any){
+      console.log(err.response);
     }
-    setCompleteList(completeList.filter((value: any)=>e.target.parentNode.id !== value.id));
-  }
-  const handleRemove=(e: any)=>{
-    if(e.target.parentNode.getAttribute('data-type') == 'main'){
-      setList(list.filter((value: any)=>e.target.parentNode.id !== value.id));
-    }else{
-      setCompleteList(completeList.filter((value: any)=>e.target.parentNode.id !== value.id));
-    }
+    props.refreshData();
   }
 
   const [editData, setEditData] = useState<any>();
-  const toggleEditMode=()=>{
-    setEditMode(!editMode);
-  }
   const getEditData=(e: any, index: number)=>{
     setEditData({
-      listName: e.target.parentNode.getAttribute('data-type'),
-      elementIndex: index,
+      listType: e.target.parentElement.getAttribute('data-type'),
+      id: e.target.parentElement.id
     });
   }
 
   return (
     <div className="main">
-      <div className='main__sidebar'>
-        <FiMenu
-          className='main__sidebar-icon'
-          onClick={props.toggleSidebar}
-        />
-      </div>
       <Edit
         editData={editData}
-        list={list}
-        setList={setList}
-        completeList={completeList}
-        setCompleteList={setCompleteList}
-        enabled={editMode}
-        toggleEditMode={toggleEditMode}
+        todo={props.todo}
+        complete={props.complete}
+        enabled={props.editMode}
+        refreshData={props.refreshData}
+        toggleEditMode={props.toggleEditMode}
       />
       <h1 className="create__header">Create Task</h1>
       <div className="main__create-container">
@@ -153,7 +178,7 @@ export default function Main(props: Props) {
                 onKeyDown={(e: any)=>{e.preventDefault(); return false}}
                 selected={pickerDate}
                 value={format(task.dueDate, "eeee, d MMMM")}
-                onChange={(date) => handleDateChange(date)}
+                onChange={(date: any) => handleDateChange(date)}
                 dateFormat="eeee, d MMMM"
               />
             </div>
@@ -164,75 +189,77 @@ export default function Main(props: Props) {
         </div>
       </div>
       {
-        list.length==0 ? null : (
-          <>
-            <h1 className="create__header">To-do</h1>
-            <div className="main__todo-list">
-              {
-                list.map((value: any, index: number)=>{
-                  return (
-                    <div className="main__todo" id={value.id} data-type='main' key={index}>
-                      <AiOutlineCheckCircle
-                        className="main__icon main__check-icon"
-                        onClick={(e: any)=>handleCheck(e)}
-                      />
-                      <AiOutlineCloseCircle
-                        className="main__icon main__remove-icon"
-                        onClick={(e: any)=>handleRemove(e)}
-                      />
-                      <AiOutlineEdit
-                        className="main__icon main__edit-icon"
-                        onClick={(e: any)=>{getEditData(e,index); toggleEditMode()}}
-                      />
-                      <span className="main__title">{value.title}</span>
-                      <span className="main__note">{value.note}</span>
-                      <span className={
-                        `main__due-date ${checkDatePlacement(currentDate, value.dueDate)}`
-                        }>{format(value.dueDate, "eeee, d MMMM")}
-                      </span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          </>
-        )
+        <>
+          <h1 className="create__header">To-do</h1>
+          <div className="main__todo-list">
+            {
+              props.todo.map((value: any, index: number)=>{
+                return (
+                  <div className="main__todo" id={value.id} data-type='todo' key={index}>
+                    <AiOutlineCheckCircle
+                      className="main__icon main__check-icon"
+                      onClick={(e: any)=>handleCheck(e)}
+                    />
+                    <AiOutlineCloseCircle
+                      className="main__icon main__remove-icon"
+                      onClick={(e: any)=>handleRemove(e)}
+                    />
+                    <AiOutlineEdit
+                      className="main__icon main__edit-icon"
+                      onClick={(e: any)=>{getEditData(e,index); props.toggleEditMode()}}
+                    />
+                    <span className="main__title">{value.title}</span>
+                    <span className="main__note">{value.note}</span>
+                    <span className={
+                      `main__due-date ${checkDatePlacement(currentDate, new Date(value.dueDate))}`
+                      }>{format(value.dueDate, "eeee, d MMMM")}
+                    </span>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </>
       }
       {
-        completeList.length==0 ? null : (
-          <>
-            <h1 className="create__header">Completed</h1>
-            <div className="main__completed-list">
-              {
-                completeList.map((value: any, index: number)=>{
-                  return (
-                    <div className="main__todo" id={value.id} data-type='complete' key={index}>
-                      <AiOutlineCheckCircle
-                        className="main__icon main__check-icon--complete"
-                        onClick={(e: any)=>handleUncheck(e)}
-                      />
-                      <AiOutlineCloseCircle
-                        className="main__icon main__remove-icon"
-                        onClick={(e: any)=>handleRemove(e)}
-                      />
-                      <AiOutlineEdit
-                        className="main__icon main__edit-icon"
-                        onClick={(e: any)=>{getEditData(e, index); toggleEditMode()}}
-                      />
-                      <span className="main__title">{value.title}</span>
-                      <span className="main__note">{value.note}</span>
-                      <span className={
-                        `main__due-date ${checkDatePlacement(currentDate, value.dueDate)}`
-                        }>{format(value.dueDate, "eeee, d MMMM")}
-                      </span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          </>
-        )
+        <>
+          <h1 className="create__header">Completed</h1>
+          <div className="main__completed-list">
+            {
+              props.complete.map((value: any, index: number)=>{
+                return (
+                  <div className="main__todo" id={value.id} data-type='complete' key={index}>
+                    <AiOutlineCheckCircle
+                      className="main__icon main__check-icon--complete"
+                      onClick={(e: any)=>handleCheck(e)}
+                    />
+                    <AiOutlineCloseCircle
+                      className="main__icon main__remove-icon"
+                      onClick={(e: any)=>handleRemove(e)}
+                    />
+                    <AiOutlineEdit
+                      className="main__icon main__edit-icon"
+                      onClick={(e: any)=>{getEditData(e, index); props.toggleEditMode()}}
+                    />
+                    <span className="main__title">{value.title}</span>
+                    <span className="main__note">{value.note}</span>
+                    <span className={
+                      `main__due-date ${checkDatePlacement(currentDate, new Date(value.dueDate))}`
+                      }>{format(value.dueDate, "eeee, d MMMM")}
+                    </span>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </>
       }
     </div>
   );
 }
+      //<div className='main__sidebar'>
+        //<FiMenu
+          //className='main__sidebar-icon'
+          //onClick={props.toggleSidebar}
+        ///>
+      //</div>

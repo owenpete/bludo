@@ -3,14 +3,14 @@ import { BsX } from 'react-icons/bs';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import format from "date-fns/format";
+import axios from 'axios';
 
 interface Props{
   editData: any;
-  list: any;
-  setList: any;
-  completeList: any;
-  setCompleteList: any;
+  todo: any;
+  complete: any;
   enabled: boolean;
+  refreshData: ()=>void;
   toggleEditMode: ()=>void;
 }
 
@@ -22,10 +22,15 @@ export default function Edit(props: Props){
 
   useEffect(()=>{
     if(props.enabled){
-      const listType = (props.editData.listName=='main' ? props.list : props.completeList)[props.editData.elementIndex];
-      setTitle(listType.title);
-      setNote(listType.note);
-      setDueDate(listType.dueDate);
+      const listType = (props.editData.listType=='todo' ? props.todo : props.complete);
+      console.log(listType.length);
+      for(let i = 0; i < listType.length; i++){
+        if(listType[i].id == props.editData.id){
+          setTitle(listType[i].title);
+          setNote(listType[i].note);
+          setDueDate(new Date(listType[i].dueDate));
+        }
+      }
       document.getElementById('dimmer').style.backgroundColor="rgba(0,0,0,0.4)";
       document.getElementById('dimmer').style.pointerEvents="auto";
       editRef.current.style.transform='translate(0, 0)';
@@ -37,28 +42,19 @@ export default function Edit(props: Props){
   }, [props.enabled]);
 
 
-  const handleSave = () =>{
-    const task = {title: title, note: note, dueDate: dueDate};
-    if(props.editData.listName == 'main'){
-      props.setList([
-        ...props.list.slice(0, props.editData.elementIndex),
-        {
-          ...props.list[props.editData.elementIndex],
-          ...task,
-        },
-        ...props.list.slice(props.editData.elementIndex+1)
-      ]);
-    }else{
-      props.setCompleteList([
-        ...props.completeList.slice(0, props.editData.elementIndex),
-        {
-          ...props.completeList[props.editData.elementIndex],
-          ...task,
-        },
-        ...props.completeList.slice(props.editData.elementIndex+1)
-      ]);
+  const handleSave = async() =>{
+    try{
+      await axios.post('http://localhost:3000/api/edit',{
+        title: title,
+        note: note,
+        dueDate: dueDate.getTime(),
+        id: props.editData.id
+      });
+      props.refreshData();
+      props.toggleEditMode();
+    }catch(err: any){
+      console.log(err.response);
     }
-    props.toggleEditMode();
   }
 
   return (
