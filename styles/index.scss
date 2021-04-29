@@ -6,6 +6,15 @@
   height: 100%;
 }
 
+.index__theme-toggle{
+  color: var(--fontColorPrimary);
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 2rem 2.5rem;
+  font-size: 32px;
+}
+
 .index__sidebar-action{
   position: fixed;
   bottom: 0;

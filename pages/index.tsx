@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { FiMenu } from 'react-icons/fi';
+import { FiSun, FiMoon } from 'react-icons/fi';
 
 import Head from 'next/head'
 
@@ -30,7 +30,6 @@ interface Props{
 }
 
 export default function Home(props: Props) {
-
   const router = useRouter();
 
   const refreshData = () =>{
@@ -42,7 +41,7 @@ export default function Home(props: Props) {
   }
 
   const [page, setPage] = useState<any>('all');
-  const [theme, setTheme] = useState<string>("light");
+  const [theme, setTheme] = useState<string>('');
   const toggleSidebarRef = useRef<any>();
   const [sidebarState, setSidebarState] = useState<boolean>(true);
   const toggleSidebar=()=>{
@@ -57,9 +56,17 @@ export default function Home(props: Props) {
   }
 
   useEffect(()=>{
-    document.body.classList.add(theme);
-    console.log(props.list);
-  });
+    if(document.body.classList.contains('dark')){
+      setTheme('dark');
+    }else{
+      setTheme('light');
+    }
+  }, []);
+
+  const handleTheme = () =>{
+    document.body.classList.toggle('dark');
+    setTheme(theme=='dark'? 'light' : 'dark');
+  }
 
   return (
     <div className='index'>
@@ -76,6 +83,11 @@ export default function Home(props: Props) {
         editMode={editMode}
         toggleEditMode={toggleEditMode}
       />
+      <div className='index__theme-toggle' onClick={handleTheme}>
+        {
+          theme=='dark' ? <FiSun /> : <FiMoon />
+        }
+      </div>
     </div>
   )
 }

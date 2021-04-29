@@ -15,11 +15,13 @@ $editColor: var(--warning);
   margin-left: auto;
   text-align: left;
   .main__create-container {
-    background-color: white;
+    color: var(--fontColorPrimary);
+    background-color: var(--backgroundPrimary);
     min-height: 220px;
     width: 100%;
     padding: 30px;
     margin: 20px 0;
+    border-radius: 8px;
     .main__create {
       display: flex;
       flex-direction: column;
@@ -35,6 +37,8 @@ $editColor: var(--warning);
         }
         .main__input{
           font-size: 16px;
+          color: var(--fontColorPrimary);
+          background-color: var(--backgroundColorPrimary);
           outline: none;
           border: 1px solid var(--grayPrimary);
           border-radius: 3px;
@@ -156,7 +160,9 @@ $editColor: var(--warning);
     height: 60px;
     width: 100%;
     padding: 0 25px;
-    background-color: white;
+    border-radius: 5px;
+    color: var(--fontColorPrimary);
+    background-color: var(--backgroundPrimary);
     span {
       padding: 0 15px;
     }

@@ -1,8 +1,24 @@
-body.light{
+body{
   --colorPrimary: #3666ff;
   --colorPrimaryHover: #3059de;
+  --backgroundPrimary: #FFFFFF;
+  --backgroundSecondary: #f7f7f7;
   --grayPrimary: #a7a7a7;
   --grayPrimaryHover: #cdcdcd;
+  --fontColorPrimary: #000000;
+  --success: #00C851;
+  --warning: #ffbb33;
+  --error: #ff4444;
+}
+
+body.dark{
+  --colorPrimary: #3666ff;
+  --colorPrimaryHover: #3059de;
+  --backgroundPrimary: #202020;
+  --backgroundSecondary: #181818;
+  --grayPrimary: #a7a7a7;
+  --grayPrimaryHover: #cdcdcd;
+  --fontColorPrimary: #FFFFFF;
   --success: #00C851;
   --warning: #ffbb33;
   --error: #ff4444;
