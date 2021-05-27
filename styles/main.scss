@@ -5,15 +5,13 @@ $removeColor: var(--error);
 $editColor: var(--warning);
 
 .main {
-  display: flex;
-  flex-direction: column;
-  padding: 60px;
-  height: 100%;
-  width: 100%;
-  max-width: 1280px;
+  text-align: left;
+  padding: 3em 6%;
   margin-right: auto;
   margin-left: auto;
-  text-align: left;
+  height: 100%;
+  width: 100%;
+  max-width: 1080px;
   .main__create-container {
     color: var(--fontColorPrimary);
     background-color: var(--backgroundPrimary);
@@ -32,8 +30,7 @@ $editColor: var(--warning);
         justify-content: space-between;
         .create__label-input {
           display: block;
-          width: 33%;
-          margin: 0 20px;
+          margin: 0 2%;
         }
         .main__input{
           font-size: 16px;
@@ -54,7 +51,7 @@ $editColor: var(--warning);
         position: relative;
         top: 15px;
         width: 100%;
-        margin: 0 20px;
+        margin: 0 2%;
         .create__add {
           height: 45px;
           width: 150px;
@@ -111,8 +108,8 @@ $editColor: var(--warning);
   }
 
   &__icon {
-    font-size: 28px;
     color: var(--grayPrimary);
+    font-size: 28px;
     margin: 0 2px;
     transition: 100ms ease-in-out all;
     path:first-child {
@@ -136,10 +133,10 @@ $editColor: var(--warning);
   }
 
   &__edit-icon {
+    padding: 2px;
     font-size: 24px;
     border: 2px solid var(--grayPrimary);
     border-radius: 50%;
-    padding: 2px;
     &:hover {
       color: $editColor;
       border: 2px solid $editColor;
@@ -156,16 +153,12 @@ $editColor: var(--warning);
   .main__todo {
     display: flex;
     align-items: center;
+    position: relative;
     margin: 8px 0;
-    height: 60px;
     width: 100%;
-    padding: 0 25px;
     border-radius: 5px;
     color: var(--fontColorPrimary);
     background-color: var(--backgroundPrimary);
-    span {
-      padding: 0 15px;
-    }
   }
 }
 
@@ -178,4 +171,68 @@ $editColor: var(--warning);
     color: var(--colorPrimary);
     font-size: 28px;
   }
+}
+
+.main__actions{
+  display: flex;
+  align-items: center;
+  height: fit-content;
+}
+
+@media(max-width: 640px){
+  .main__actions, .main__title, .main__due-date{
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .main__actions{
+    svg{
+      margin: 0 2px;
+    }
+  }
+  .main__title, .main__due-date{
+  }
+
+  .main__due-date, .main__note{
+    font-size: 13px;
+  }
+
+  .main__title{
+    margin: 5px 0;
+  }
+  .main__note{
+    position: absolute;
+    right: 0;
+    margin: 0 10px 0 0;
+  }
+  .main__todo{
+    flex-wrap: wrap;
+    height: 125px;
+    padding: 15px;
+    span {
+      padding: 0 15px 0 5px;
+    }
+  }
+  .main__input-container{
+    flex-direction: column;
+    padding: 0;
+    .create__label-input{
+      width: 100%;
+    }
+  }
+}
+@media(min-width: 640px){
+  .main__todo{
+    height: 60px;
+    padding: 0 25px;
+    span {
+      padding: 0 15px;
+    }
+  }
+}
+@media(min-width: 768px){
+}
+@media(min-width: 1024px){
+}
+@media(min-width: 1280px){
 }

@@ -42,8 +42,8 @@ interface Props{
 
 export default function Main(props: Props) {
   useEffect(()=>{
-  });
-
+    console.log(props.todo.length)
+  })
   const currentDate = new Date();
   const [pickerDate, setPickerDate] = useState(new Date());
   const [task, setTask] = useState<Task>({
@@ -85,12 +85,12 @@ export default function Main(props: Props) {
       const todo = await res.data.todo;
       const complete = await res.data.complete;
       for(let i = 0; i < todo.length; i++){
-        if(todo[i].id == e.target.parentElement.id){
+        if(todo[i].id == e.target.parentElement.parentElement.id){
           await axios.post('http://localhost:3000/api/checkItem', {index: i, list: 'todo'});
         }
       }
       for(let i = 0; i < complete.length; i++){
-        if(complete[i].id == e.target.parentElement.id){
+        if(complete[i].id == e.target.parentElement.parentElement.id){
           await axios.post('http://localhost:3000/api/checkItem', {index: i, list: 'complete'});
         }
       }
@@ -106,12 +106,12 @@ export default function Main(props: Props) {
       const todo = await res.data.todo;
       const complete = await res.data.complete;
       for(let i = 0; i < todo.length; i++){
-        if(todo[i].id == e.target.parentElement.id){
+        if(todo[i].id == e.target.parentElement.parentElement.id){
           await axios.post('http://localhost:3000/api/removeItem', {index: i, list: 'todo'});
         }
       }
       for(let i = 0; i < complete.length; i++){
-        if(complete[i].id == e.target.parentElement.id){
+        if(complete[i].id == e.target.parentElement.parentElement.id){
           await axios.post('http://localhost:3000/api/removeItem', {index: i, list: 'complete'});
         }
       }
@@ -124,8 +124,8 @@ export default function Main(props: Props) {
   const [editData, setEditData] = useState<any>();
   const getEditData=(e: any, index: number)=>{
     setEditData({
-      listType: e.target.parentElement.getAttribute('data-type'),
-      id: e.target.parentElement.id
+      listType: e.target.parentElement.parentElement.getAttribute('data-type'),
+      id: e.target.parentElement.parentElement.id
     });
   }
 
@@ -188,7 +188,7 @@ export default function Main(props: Props) {
           </div>
         </div>
       </div>
-      {
+      {props.todo.length!==0&&
         <>
           <h1 className="create__header">To-do</h1>
           <div className="main__todo-list">
@@ -196,18 +196,20 @@ export default function Main(props: Props) {
               props.todo.map((value: any, index: number)=>{
                 return (
                   <div className="main__todo" id={value.id} data-type='todo' key={index}>
-                    <AiOutlineCheckCircle
-                      className="main__icon main__check-icon"
-                      onClick={(e: any)=>handleCheck(e)}
-                    />
-                    <AiOutlineCloseCircle
-                      className="main__icon main__remove-icon"
-                      onClick={(e: any)=>handleRemove(e)}
-                    />
-                    <AiOutlineEdit
-                      className="main__icon main__edit-icon"
-                      onClick={(e: any)=>{getEditData(e,index); props.toggleEditMode()}}
-                    />
+                    <div className='main__actions'>
+                      <AiOutlineCheckCircle
+                        className="main__icon main__check-icon"
+                        onClick={(e: any)=>handleCheck(e)}
+                      />
+                      <AiOutlineCloseCircle
+                        className="main__icon main__remove-icon"
+                        onClick={(e: any)=>handleRemove(e)}
+                      />
+                      <AiOutlineEdit
+                        className="main__icon main__edit-icon"
+                        onClick={(e: any)=>{getEditData(e,index); props.toggleEditMode()}}
+                      />
+                    </div>
                     <span className="main__title">{value.title}</span>
                     <span className="main__note">{value.note}</span>
                     <span className={
@@ -221,26 +223,28 @@ export default function Main(props: Props) {
           </div>
         </>
       }
-      {
+      {props.complete.length!==0&&
         <>
           <h1 className="create__header">Completed</h1>
           <div className="main__completed-list">
-            {
+            {props.complete&&
               props.complete.map((value: any, index: number)=>{
                 return (
                   <div className="main__todo" id={value.id} data-type='complete' key={index}>
-                    <AiOutlineCheckCircle
-                      className="main__icon main__check-icon--complete"
-                      onClick={(e: any)=>handleCheck(e)}
-                    />
-                    <AiOutlineCloseCircle
-                      className="main__icon main__remove-icon"
-                      onClick={(e: any)=>handleRemove(e)}
-                    />
-                    <AiOutlineEdit
-                      className="main__icon main__edit-icon"
-                      onClick={(e: any)=>{getEditData(e, index); props.toggleEditMode()}}
-                    />
+                    <div className='main__actions'>
+                      <AiOutlineCheckCircle
+                        className="main__icon main__check-icon--complete"
+                        onClick={(e: any)=>handleCheck(e)}
+                      />
+                      <AiOutlineCloseCircle
+                        className="main__icon main__remove-icon"
+                        onClick={(e: any)=>handleRemove(e)}
+                      />
+                      <AiOutlineEdit
+                        className="main__icon main__edit-icon"
+                        onClick={(e: any)=>{getEditData(e, index); props.toggleEditMode()}}
+                      />
+                    </div>
                     <span className="main__title">{value.title}</span>
                     <span className="main__note">{value.note}</span>
                     <span className={
