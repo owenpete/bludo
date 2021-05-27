@@ -159,19 +159,6 @@ export default function Main(props: Props) {
               />
             </div>
             <div className="create__label-input">
-              <label className='create__label' htmlFor="notes">Notes</label>
-              <input
-                className="main__input main__note-input"
-                type="text"
-                value={task.note}
-                autoComplete='off'
-                placeholder="Bring treats."
-                onChange={(e: any) => handleNoteChange(e.target.value)}
-                onFocus={(e: any) => (e.target.placeholder = "")}
-                onBlur={(e: any) => (e.target.placeholder = "Bring treats.")}
-              />
-            </div>
-            <div className="create__label-input">
               <label className='create__label' htmlFor="date">Due Date</label>
               <DatePicker
                 className='main__input'
@@ -211,7 +198,6 @@ export default function Main(props: Props) {
                       />
                     </div>
                     <span className="main__title">{value.title}</span>
-                    <span className="main__note">{value.note}</span>
                     <span className={
                       `main__due-date ${checkDatePlacement(currentDate, new Date(value.dueDate))}`
                       }>{format(value.dueDate, "eeee, d MMMM")}
@@ -246,7 +232,6 @@ export default function Main(props: Props) {
                       />
                     </div>
                     <span className="main__title">{value.title}</span>
-                    <span className="main__note">{value.note}</span>
                     <span className={
                       `main__due-date ${checkDatePlacement(currentDate, new Date(value.dueDate))}`
                       }>{format(value.dueDate, "eeee, d MMMM")}
@@ -267,3 +252,17 @@ export default function Main(props: Props) {
           //onClick={props.toggleSidebar}
         ///>
       //</div>
+//
+            //<div className="create__label-input">
+              //<label className='create__label' htmlFor="notes">Notes</label>
+              //<input
+                //className="main__input main__note-input"
+                //type="text"
+                //value={task.note}
+                //autoComplete='off'
+                //placeholder="Bring treats."
+                //onChange={(e: any) => handleNoteChange(e.target.value)}
+                //onFocus={(e: any) => (e.target.placeholder = "")}
+                //onBlur={(e: any) => (e.target.placeholder = "Bring treats.")}
+              ///>
+            //</div>

@@ -26,8 +26,8 @@ $editColor: var(--warning);
       border-radius: 5px;
       .main__input-container {
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
         .create__label-input {
           display: block;
           margin: 0 2%;
@@ -228,6 +228,9 @@ $editColor: var(--warning);
     span {
       padding: 0 15px;
     }
+  }
+  .create__label-input{
+      width: 50%;
   }
 }
 @media(min-width: 768px){
